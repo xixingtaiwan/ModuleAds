@@ -304,7 +304,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
     private boolean isClapingTimeValid(long loadTime, long numSeconds) {
         long dateDifference = (new Date()).getTime() - loadTime;
         long numMilliSecondsPerSecond = 1000;
-        return (dateDifference < (numMilliSecondsPerSecond * numSeconds));
+        return (dateDifference > (numMilliSecondsPerSecond * numSeconds));
     }
 
     public boolean isAdAvailable(boolean isSplash) {
@@ -1497,8 +1497,8 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         }
 
         long lastShowedTime = appResumeShowedTime;
-        boolean wasLoadTimeLessThanNHoursAgo = isClapingTimeValid(lastShowedTime, 20);
-        if (!wasLoadTimeLessThanNHoursAgo) {
+        boolean isClapingTimeValid = isClapingTimeValid(lastShowedTime, 20);
+        if (!isClapingTimeValid) {
             return;
         }
         showAdIfAvailable(false);
