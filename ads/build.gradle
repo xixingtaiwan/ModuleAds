@@ -78,7 +78,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.quyenvnu'
                 artifactId = 'Windy-Studio'
-                version = '2.1.4'
+                version = '3.9.3'
             }
         }
     }
