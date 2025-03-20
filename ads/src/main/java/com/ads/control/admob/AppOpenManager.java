@@ -72,6 +72,8 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
 
     private static boolean isShowingAd = false;
     private long appResumeLoadTime = 0;
+    private long appResumeShowedTime = 0;
+
     private long splashLoadTime = 0;
     private int splashTimeout = 0;
 
@@ -299,6 +301,12 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         return (dateDifference < (numMilliSecondsPerHour * numHours));
     }
 
+    private boolean isClapingTimeValid(long loadTime, long numSeconds) {
+        long dateDifference = (new Date()).getTime() - loadTime;
+        long numMilliSecondsPerSecond = 1000;
+        return (dateDifference < (numMilliSecondsPerSecond * numSeconds));
+    }
+
     public boolean isAdAvailable(boolean isSplash) {
         long loadTime = isSplash ? splashLoadTime : appResumeLoadTime;
         boolean wasLoadTimeLessThanNHoursAgo = wasLoadTimeLessThanNHoursAgo(loadTime, 4);
@@ -437,6 +445,8 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                                     }
                                     isShowingAd = true;
                                     splashAd = null;
+                                    AppOpenManager.this.appResumeShowedTime = (new Date()).getTime();
+
                                 }
 
 
@@ -521,6 +531,7 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
                         }
                         isShowingAd = true;
                         appResumeAd = null;
+                        AppOpenManager.this.appResumeShowedTime = (new Date()).getTime();
                     }
 
                     @Override
@@ -1483,6 +1494,12 @@ public class AppOpenManager implements Application.ActivityLifecycleCallbacks, L
         } else {
             Log.d(TAG, "onStart: currentActivity is NULL");
             FirebaseAnalyticsUtil.logCrashOpenSplash(myApplication.getApplicationContext());
+        }
+
+        long lastShowedTime = appResumeShowedTime;
+        boolean wasLoadTimeLessThanNHoursAgo = isClapingTimeValid(lastShowedTime, 20);
+        if (!wasLoadTimeLessThanNHoursAgo) {
+            return;
         }
         showAdIfAvailable(false);
     }
