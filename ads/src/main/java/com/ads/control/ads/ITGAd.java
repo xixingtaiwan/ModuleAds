@@ -106,7 +106,6 @@ public class ITGAd {
 
         // Change the log level.
         config.setLogLevel(LogLevel.VERBOSE);
-        config.setPreinstallTrackingEnabled(true);
         config.setOnAttributionChangedListener(new OnAttributionChangedListener() {
             @Override
             public void onAttributionChanged(AdjustAttribution attribution) {
@@ -115,44 +114,30 @@ public class ITGAd {
             }
         });
 
-        // Set event success tracking delegate.
-        config.setOnEventTrackingSucceededListener(new OnEventTrackingSucceededListener() {
-            @Override
-            public void onFinishedEventTrackingSucceeded(AdjustEventSuccess eventSuccessResponseData) {
-                Log.d(TAG_ADJUST, "Event success callback called!");
-                Log.d(TAG_ADJUST, "Event success data: " + eventSuccessResponseData.toString());
-            }
-        });
-        // Set event failure tracking delegate.
-        config.setOnEventTrackingFailedListener(new OnEventTrackingFailedListener() {
-            @Override
-            public void onFinishedEventTrackingFailed(AdjustEventFailure eventFailureResponseData) {
-                Log.d(TAG_ADJUST, "Event failure callback called!");
-                Log.d(TAG_ADJUST, "Event failure data: " + eventFailureResponseData.toString());
-            }
+        // Event success callback
+        config.setOnEventTrackingSucceededListener(eventSuccess -> {
+            Log.d(TAG_ADJUST, "Event success callback called!");
+            Log.d(TAG_ADJUST, "Event success data: " + eventSuccess);
         });
 
-        // Set session success tracking delegate.
-        config.setOnSessionTrackingSucceededListener(new OnSessionTrackingSucceededListener() {
-            @Override
-            public void onFinishedSessionTrackingSucceeded(AdjustSessionSuccess sessionSuccessResponseData) {
-                Log.d(TAG_ADJUST, "Session success callback called!");
-                Log.d(TAG_ADJUST, "Session success data: " + sessionSuccessResponseData.toString());
-            }
+        // Event failure callback
+        config.setOnEventTrackingFailedListener(eventFailure -> {
+            Log.d(TAG_ADJUST, "Event failure callback called!");
+            Log.d(TAG_ADJUST, "Event failure data: " + eventFailure);
         });
 
-        // Set session failure tracking delegate.
-        config.setOnSessionTrackingFailedListener(new OnSessionTrackingFailedListener() {
-            @Override
-            public void onFinishedSessionTrackingFailed(AdjustSessionFailure sessionFailureResponseData) {
-                Log.d(TAG_ADJUST, "Session failure callback called!");
-                Log.d(TAG_ADJUST, "Session failure data: " + sessionFailureResponseData.toString());
-            }
+        // Session success callback
+        config.setOnSessionTrackingSucceededListener(sessionSuccess -> {
+            Log.d(TAG_ADJUST, "Session success callback called!");
+            Log.d(TAG_ADJUST, "Session success data: " + sessionSuccess);
         });
 
-
-        config.setSendInBackground(true);
-        Adjust.onCreate(config);
+        // Session failure callback
+        config.setOnSessionTrackingFailedListener(sessionFailure -> {
+            Log.d(TAG_ADJUST, "Session failure callback called!");
+            Log.d(TAG_ADJUST, "Session failure data: " + sessionFailure);
+        });
+        Adjust.initSdk(config);
         adConfig.getApplication().registerActivityLifecycleCallbacks(new AdjustLifecycleCallbacks());
     }
 
